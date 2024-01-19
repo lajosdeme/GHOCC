@@ -5,11 +5,11 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/utils/SafeERC20.sol";
 import {EnumerableMap} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/structs/EnumerableMap.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./gho/interfaces/IGhoToken.sol";
+import "./interfaces/ICrossChainFacilitator.sol";
+import "./PercentageMath.sol";
 
 /* 
 - take USDC as payment, mint GHO in return
@@ -26,7 +26,9 @@ import "./gho/interfaces/IGhoToken.sol";
  4. have another function for sending cross chain
   */
 
-contract CrossChainFacilitator {
+contract CrossChainFacilitator is ICrossChainFacilitator {
+    using PercentageMath for uint256;
+
     // GHO token address
     IGhoToken public immutable GHO_TOKEN;
 
@@ -43,12 +45,53 @@ contract CrossChainFacilitator {
 
     address private _aaveGovernance;
 
-    constructor(address ghoToken, address ghoTreasury, address aaveGovernance, uint256 fee) {
+    uint256 private _ghoTreasuryFees;
+
+    constructor(address ghoToken, address usdcToken, address ghoTreasury, address aaveGovernance, uint256 fee) {
         require(fee <= MAX_FEE, 'CrossChainFacilitator: Fee out of range');
         GHO_TOKEN = IGhoToken(ghoToken);
+        USDC_TOKEN = IERC20(usdcToken);
         _updateGhoTreasury(ghoTreasury);
         _updateFee(fee);
-        _updateAaveGovernance(newAaveGovernance);
+        _updateAaveGovernance(aaveGovernance);
+    }
+
+    function mintGHOForUSDC(uint256 amount, address to) external {
+        // transfer the USDC to this contract
+        require(USDC_TOKEN.transferFrom(msg.sender, address(this), amount), "CrossChainFacilitator: Failed to transfer USDC to facilitator");
+
+        // The fee due to the treasury
+        uint256 ghoccFee = _ghoccFee(amount);
+
+        // If the contract has enough GHO we transfer it out and not mint
+        if (ghoBalance() >= amount + ghoccFee) {
+            GHO_TOKEN.transfer(to, amount);
+            _ghoTreasuryFees += ghoccFee;
+            return;
+        }
+
+        // mint the GHO tokens
+        GHO_TOKEN.mint(to, amount);
+        // mint the fee for the treasury
+        GHO_TOKEN.mint(address(this), ghoccFee);
+        _ghoTreasuryFees += ghoccFee;
+    }
+
+    function redeemUSDCForGHO(uint256 amount) external {
+
+    }
+
+    function sendGHOCrossChain(uint256 chainId, uint256 amount) external {
+
+    }
+
+    function _ghoccFee(uint256 amount) internal view returns (uint256) {
+        return amount.percentMul(_fee);
+    }
+
+
+    function ghoBalance() internal view returns (uint256) {
+        return GHO_TOKEN.balanceOf(address(this));
     }
 
     function updateFee(uint256 newFee) external { // TODO
@@ -84,5 +127,10 @@ contract CrossChainFacilitator {
         address oldAaveGovernance = _aaveGovernance;
         _aaveGovernance = newAaveGovernance;
         emit AaveGovernanceUpdated(oldAaveGovernance, newAaveGovernance);
+    }
+
+    function distributeFeesToTreasury() external override {
+        GHO_TOKEN.transfer(_ghoTreasury, _ghoTreasuryFees);
+        emit FeesDistributedToTreasury(_ghoTreasury, address(GHO_TOKEN), _ghoTreasuryFees);
     }
 }

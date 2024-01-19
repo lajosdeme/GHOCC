@@ -14,6 +14,14 @@ interface ICrossChainFacilitator is IGhoFacilitator {
 
     event AaveGovernanceUpdated(address oldAaveGovernance, address newAaveGovernance);
 
+    // If we have GHO in the contract, we just gonna transfer that to the address, if not we gonna mint
+    // Or we can transfer the GHO that's in the contract, and mint the rest of the amount
+    function mintGHOForUSDC(uint256 amount, address to) external;
+
+    function redeemUSDCForGHO(uint256 amount) external;
+
+    function sendGHOCrossChain(uint256 chainId, uint256 amount) external;
+
     /**
      * @notice Returns the address of the GHO token contract
      * @return The address of the GhoToken

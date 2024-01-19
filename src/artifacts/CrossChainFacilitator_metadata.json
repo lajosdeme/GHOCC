@@ -1,0 +1,550 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "ghoToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "ghoTreasury",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "aaveGovernance",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fee",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oldAaveGovernance",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newAaveGovernance",
+						"type": "address"
+					}
+				],
+				"name": "AaveGovernanceUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldFee",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newFee",
+						"type": "uint256"
+					}
+				],
+				"name": "FeeUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "ghoTreasury",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "asset",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "FeesDistributedToTreasury",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldGhoTreasury",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newGhoTreasury",
+						"type": "address"
+					}
+				],
+				"name": "GhoTreasuryUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "GHO_TOKEN",
+				"outputs": [
+					{
+						"internalType": "contract IGhoToken",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MAX_FEE",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "USDC_TOKEN",
+				"outputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "distributeFeesToTreasury",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFee",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getGhoTreasury",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "mintGHOForUSDC",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "redeemUSDCForGHO",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "chainId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "sendGHOCrossChain",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newFee",
+						"type": "uint256"
+					}
+				],
+				"name": "updateFee",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newGhoTreasury",
+						"type": "address"
+					}
+				],
+				"name": "updateGhoTreasury",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"events": {
+				"FeeUpdated(uint256,uint256)": {
+					"details": "Emitted when the percentage fee is updated",
+					"params": {
+						"newFee": "The new fee (in bps)",
+						"oldFee": "The old fee (in bps)"
+					}
+				},
+				"FeesDistributedToTreasury(address,address,uint256)": {
+					"details": "Emitted when fees are distributed to the GhoTreasury",
+					"params": {
+						"amount": "The amount of the asset transferred to the ghoTreasury",
+						"asset": "The address of the asset transferred to the ghoTreasury",
+						"ghoTreasury": "The address of the ghoTreasury"
+					}
+				},
+				"GhoTreasuryUpdated(address,address)": {
+					"details": "Emitted when Gho Treasury address is updated",
+					"params": {
+						"newGhoTreasury": "The address of the new GhoTreasury contract",
+						"oldGhoTreasury": "The address of the old GhoTreasury contract"
+					}
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"getFee()": {
+					"returns": {
+						"_0": "The percentage fee of the minted amount that needs to be repaid, on top of the principal (in bps)."
+					}
+				},
+				"getGhoTreasury()": {
+					"returns": {
+						"_0": "The address of the GhoTreasury contract"
+					}
+				},
+				"updateFee(uint256)": {
+					"details": "The fee is expressed in bps. A value of 100, results in 1.00%",
+					"params": {
+						"newFee": "The new percentage fee (in bps)"
+					}
+				},
+				"updateGhoTreasury(address)": {
+					"details": "WARNING: The GhoTreasury is where revenue fees are sent to. Update carefully",
+					"params": {
+						"newGhoTreasury": "The address of the GhoTreasury"
+					}
+				}
+			},
+			"stateVariables": {
+				"GHO_TOKEN": {
+					"return": "The address of the GhoToken",
+					"returns": {
+						"_0": "The address of the GhoToken"
+					}
+				},
+				"MAX_FEE": {
+					"return": "The maximum percentage fee of the minted amount that the fee can be set to (in bps).",
+					"returns": {
+						"_0": "The maximum percentage fee of the minted amount that the fee can be set to (in bps)."
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"GHO_TOKEN()": {
+					"notice": "Returns the address of the GHO token contract"
+				},
+				"MAX_FEE()": {
+					"notice": "Returns the maximum value the fee can be set to"
+				},
+				"distributeFeesToTreasury()": {
+					"notice": "Distribute fees to the GhoTreasury"
+				},
+				"getFee()": {
+					"notice": "Returns the percentage of each mint taken as a fee"
+				},
+				"getGhoTreasury()": {
+					"notice": "Returns the address of the Gho Treasury"
+				},
+				"updateFee(uint256)": {
+					"notice": "Updates the percentage fee. It is the percentage of the minted amount that needs to be repaid."
+				},
+				"updateGhoTreasury(address)": {
+					"notice": "Updates the address of the Gho Treasury"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/CrossChainFacilitator.sol": "CrossChainFacilitator"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": [
+			":@chainlink/contracts-ccip/=lib/contracts-ccip/",
+			":@openzeppelin/=lib/openzeppelin-contracts/",
+			":ds-test/=lib/forge-std/lib/ds-test/src/",
+			":forge-std/=lib/forge-std/",
+			":forge-std/=lib/forge-std/src/"
+		]
+	},
+	"sources": {
+		"lib/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol": {
+			"keccak256": "0xd59dbf083bfad8fe95248cac59822ade0bc7d70e50ab05e366cb35a2b2ea99f6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://20205c17fa785b37acf0547c656ed60e09e806df7472e0f608129daa028f30f7",
+				"dweb:/ipfs/QmcAUurGrEdn5pE66sVQek4M7EiGkdoKt38qThFpxcpGLB"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/ccip/interfaces/IAny2EVMMessageReceiver.sol": {
+			"keccak256": "0xd2a05a4f58a453cbf8cfa6aa78f58cb8e42091b3a025f711a0aa51f584e16b48",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e3bb4ca50612b0150a29b9ea7c82f6228914ff54716584541bad5c0259e8fa33",
+				"dweb:/ipfs/QmTnqhNtBD9bUmqVaR4YHkWrBUdSGHV3DXAgrTM193PGkH"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol": {
+			"keccak256": "0x7f2fdd93e516b7476c6fab099f6806adf5ceaf399b0cc415f6b9ede890f2379b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://14e2547e54a0e225d1aa654d49ad47a169f966b985456612af449eec610189ea",
+				"dweb:/ipfs/QmcWVnkJ6TKcUR4koDQQGiYMEt7vJ6WG9XcrwbPiPDHoP9"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/ccip/libraries/Client.sol": {
+			"keccak256": "0x8af3ac1085c87342373772fb1a0107c7b90258e6bfed318ab2a601a14477e679",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://14395fefc8310c9a355262359c8f51036f83c004982fb600164c2a007629f81e",
+				"dweb:/ipfs/QmeCLr8a5bDVyLQm8v947ULgV4CZmUeQPjVyWixzieBD5o"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/shared/access/ConfirmedOwner.sol": {
+			"keccak256": "0x99d0b0786fe368970009c703f2249bfbc56340ddf1a28b60d2915bb58c34cd72",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://af0371c1af45db651823b9a3d5af761b08243c78f105166342eee28de356c8dd",
+				"dweb:/ipfs/QmPnC9qNDKwJFd5unwLb9pxjrutoe8MWjm5EXHTxq2kJ4x"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol": {
+			"keccak256": "0x215529a99534a40e6257ef2282a91ea4a95b66debc3997866406907622efb405",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ecc56a2cddb1ba6225ca0cffb07fdf6e24bcc4234cc87710c42a59c0a21ae395",
+				"dweb:/ipfs/QmSpW4vkPHeRNZ14beMEk2LEtqY5JQTueNJC4sCT8JaSoc"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol": {
+			"keccak256": "0x895af02d6a3df2930bbb6ec1f2d68118b492ca6e710ba0c34fcb6b574a0906aa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c4c69fab5eea1c0448f856a51d7e5736454fe5cc083d36c60bf3ee23bb3d0e8e",
+				"dweb:/ipfs/QmP4fYQ9k7xeZms6cwnqnQuuAkRkeE2TWewyvCD8Mrc2DZ"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/shared/interfaces/IOwnable.sol": {
+			"keccak256": "0x885de72b7b4e4f1bf8ba817a3f2bcc37fd9022d342c4ce76782151c30122d767",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://17c636625a5d29a140612db496d2cca9fb4b48c673adb0fd7b3957d287e75921",
+				"dweb:/ipfs/QmNoBX8TY424bdQWyQC7y3kpKfgxyWxhLw7KEhhEEoBN9q"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0x527e858729af8197f6c8f99554d32bfc4f5a72b15975489c94809363d7ae522f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6828dfa867eaff18f383aad4ca4b5aaedb93109023d74aaf418fee6c06e556c2",
+				"dweb:/ipfs/QmXSQ9WnaJ6Ba9gvKvgNxDY7sa7ATJ9V55uwGSGCpBuJKu"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
+			"keccak256": "0x28d267ba89cbaca4a86577add59f1a18842ca6e7d80a05f3dbf52127928a5e2c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://67a26777e88ae78952713f4479ca3126db804dc9ce1a85f079ec067393a6275d",
+				"dweb:/ipfs/QmNLxBkkA6os8W9vUeCsjcFsMkGhtqAZrGjPuoACTqVhbh"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/utils/SafeERC20.sol": {
+			"keccak256": "0x19d64e8f5fa895ab2625917111fd9f316d4f9314239f0712fd6dc2f5bff9d0c9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://14de158ff9e64ebeac381bba59fe3500b48853063cfb27343090a3f710795fee",
+				"dweb:/ipfs/QmQJE5SfDfgy8aKENnsjW4t9P4bmTSnujotFmnXnrwpfzQ"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/Address.sol": {
+			"keccak256": "0x172a09a55d730f20a9bb309086a4ad06b17c612151f58bab2b44efe78d583d4e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1f812456ddd112f09606bfc5965c6e643558d740264273017ad556122502b4e2",
+				"dweb:/ipfs/QmdWE4wncanz9Lhu5ESgSo14jAR74Ss5puCM5zUGonATLw"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0xa36a31b4bb17fad88d023474893b3b895fa421650543b1ce5aefc78efbd43244",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0f235b9175d95111f301d729566e214c32559e55a2b0579c947484748e20679d",
+				"dweb:/ipfs/QmSsNBuPejy1wNe2u3JSt2p9wFhrjvBjFrnAaNe1nDNkEA"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/structs/EnumerableMap.sol": {
+			"keccak256": "0x68fb09424d69c771ebaeb5a425bcbdbb0725a236c0d83d517992b6f44bd7198d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c3a036ba98e5d58911511b85abd620e1d8de7d203ab2a48b2a3d827710847df4",
+				"dweb:/ipfs/QmNWrWgkfsk1AoLpWKDkbHu5CZmzEcGzrT74Ug46phm4p5"
+			]
+		},
+		"lib/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/structs/EnumerableSet.sol": {
+			"keccak256": "0x9ec0d82ee53d4137be44f1f38f9a82d0d3a2027b3b8b226a5a90e4ee76e926d6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f783b453420dee16bb4f0839e3d2485d753d2dcd317adbeecb7e510c39563f57",
+				"dweb:/ipfs/QmUd4BeCaw6ZujaYvvMrCn2BNqmiP4bt4eA9rxiXY5od5E"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/access/IAccessControl.sol": {
+			"keccak256": "0xb6b36edd6a2999fd243ff226d6cbf84bd71af2432bbd0dfe19392996a1d9cb41",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1fd2f35495652e57e3f99bc6c510bc5f7dd398a176ea2e72d8ed730aebc6ca26",
+				"dweb:/ipfs/QmTQV6X4gkikTib49cho5iDX3JvSQbdsoEChoDwrk3CbbH"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c",
+				"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq"
+			]
+		},
+		"src/CrossChainFacilitator.sol": {
+			"keccak256": "0xedc2cc08c8878e084c843778306df13237f90b84291e2eb082d2d8a460c9fb52",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://949d0be9b703a380a4b05157ce15efbcc8fd4697d63d80338683ad990bf56ae1",
+				"dweb:/ipfs/QmV5HxrfMzy6uKgWBnHeor5BYp3uGHpAHp8iKtKokDux3H"
+			]
+		},
+		"src/gho/interfaces/IGhoFacilitator.sol": {
+			"keccak256": "0x92bbe4b3abec970871fb3d04df69c24791649ef47a3e6a8759904f3c6ea62cf4",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://834a98fab6b345a9c44a523c914c7a30c8488b52ffc31aeaf28cdbdb5ee4057f",
+				"dweb:/ipfs/QmZqa4gEYYfvpmQ1pdriHEVFyUfLt8TFUBkDRWFf8Q5EA4"
+			]
+		},
+		"src/gho/interfaces/IGhoToken.sol": {
+			"keccak256": "0x5494567a105809a295f6e94e4007ac0b41c477bca796a95990a893ee177ad18f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://13300ae440eca4c799b56eda18ecebad068e9e10bbb74b458f795127c420fa50",
+				"dweb:/ipfs/QmeXmj21w3S34dnx8ygpqEf45sZfoJJwcqtVTwS1jqTSP2"
+			]
+		},
+		"src/interfaces/ICrossChainFacilitator.sol": {
+			"keccak256": "0x6e7625beb9d80a9b7bb398ed75b7f120f09d705fffe431a2dfa5da9696e31c54",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://10463bb88c3fb6514517e4fcc5cdfd1a36eeba6a6b295c4d5cfb1cf4438aac0e",
+				"dweb:/ipfs/QmeVwtXpfkHigtuymsmbh1BzfrYTHCeVCtMjbae55t57jK"
+			]
+		}
+	},
+	"version": 1
+}
