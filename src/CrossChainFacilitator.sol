@@ -77,8 +77,12 @@ contract CrossChainFacilitator is ICrossChainFacilitator {
         _ghoTreasuryFees += ghoccFee;
     }
 
-    function redeemUSDCForGHO(uint256 amount) external {
+    function redeemUSDCForGHO(uint256 amount, address to) external {
+        // transfer GHO to this contract
+        require(GHO_TOKEN.transferFrom(msg.sender, address(this), amount), "CrossChainFacilitator: Failed to transfer GHO to facilitator");
 
+        // transfer USDC to the 
+        require(USDC_TOKEN.transfer(to, amount), "CrossChainFacilitator: Failed to transfer USDC to address");
     }
 
     function sendGHOCrossChain(uint256 chainId, uint256 amount) external {

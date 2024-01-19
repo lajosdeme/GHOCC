@@ -18,7 +18,7 @@ interface ICrossChainFacilitator is IGhoFacilitator {
     // Or we can transfer the GHO that's in the contract, and mint the rest of the amount
     function mintGHOForUSDC(uint256 amount, address to) external;
 
-    function redeemUSDCForGHO(uint256 amount) external;
+    function redeemUSDCForGHO(uint256 amount, address to) external;
 
     function sendGHOCrossChain(uint256 chainId, uint256 amount) external;
 
