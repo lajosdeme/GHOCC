@@ -30,13 +30,21 @@ interface ICrossChainFacilitator is IGhoFacilitator {
         uint256 fees
     );
 
+    event MessageReceived(
+        bytes32 indexed messageId,
+        uint64 indexed sourceChainSelector,
+        address receiver,
+        address sender,
+        uint256 amount
+    );
+
     // If we have GHO in the contract, we just gonna transfer that to the address, if not we gonna mint
     // Or we can transfer the GHO that's in the contract, and mint the rest of the amount
     function mintGHOForUSDC(uint256 amount, address to) external;
 
     function redeemUSDCForGHO(uint64 amount, address to) external;
 
-    function sendGHOCrossChain(uint64 chainId, uint256 amount, address to) external returns (bytes32 messageId);
+    function sendGHOCrossChain(uint64 chainId, uint256 amount, address to) external payable returns (bytes32 messageId);
 
     /**
      * @notice Returns the address of the GHO token contract

@@ -5,32 +5,12 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
+import "./CrossChainGHOTransfer.sol";
 import "./gho/interfaces/IGhoToken.sol";
 import "./interfaces/ICrossChainFacilitator.sol";
 import "./PercentageMath.sol";
 
-/* 
-- take USDC as payment, mint GHO in return
-- lock it up and mint wGHO on destination chain
-- you can redeeem GHO by burning wGHO on destination chain
-- you can redeem USDC with GHO
- */
-
-/* 
- steps:
- 1. USDC, GHO, Aave governance hardcoded
- 2. Have a capacitiy and a limit
- 3. when received UDC mint equivalent of GHO
- 4. have another function for sending cross chain
-  */
-
 contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
-    struct CrossChainGHOTransfer {
-        uint256 amount;
-        address receiver;
-        address sender;
-    }
-
     using PercentageMath for uint256;
 
     // GHO token address
@@ -54,7 +34,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
 
     uint256 private _ghoTreasuryFees;
 
-    mapping(uint64 => address) approvedCrossChainReceivers; // TODO
+    mapping(uint64 => address) approvedCrossChainReceivers;
 
     modifier onlyAaveGovernance() {
         require(msg.sender == _aaveGovernance, "CrossChainFacilitator: Only Aave Governance can call.");
@@ -114,7 +94,11 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         require(USDC_TOKEN.transfer(to, amount), "CrossChainFacilitator: Failed to transfer USDC to address");
     }
 
-    function sendGHOCrossChain(uint64 chainId, uint256 amount, address to) external returns (bytes32 messageId) {
+    function sendGHOCrossChain(uint64 chainId, uint256 amount, address to)
+        external
+        payable
+        returns (bytes32 messageId)
+    {
         // calculate the fee to the treasury
         uint256 transferFee = _calcTransferFee(amount);
 
@@ -140,12 +124,11 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         IRouterClient router = IRouterClient(this.getRouter());
 
         uint256 fees = router.getFee(chainId, evm2AnyMessage);
-        require(fees < address(this).balance, "CrossChainFacilitator: Not enough balance to cover fees.");
+        require(fees <= msg.value, "CrossChainFacilitator: Not enough balance to cover fees.");
 
         messageId = router.ccipSend{value: fees}(chainId, evm2AnyMessage);
 
         emit MessageSent(messageId, chainId, to, amount, address(0), fees);
-
     }
 
     // MINT FEE
@@ -222,14 +205,6 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         approvedCrossChainReceivers[chainId] = ccReceiver;
     }
 
-    function encodeCCTransfer(CrossChainGHOTransfer memory _transfer) internal pure returns (bytes memory) {
-        return abi.encode(_transfer);
-    }
-
-    function decodeCCTransfer(bytes memory _transferBytes) internal pure returns (CrossChainGHOTransfer memory) {
-        return abi.decode(_transferBytes, (CrossChainGHOTransfer));
-    }
-
     /// @notice Construct a CCIP message.
     /// @dev This function will create an EVM2AnyMessage struct with all the necessary information for sending a text.
     /// @param _receiver The address of the receiver.
@@ -258,6 +233,30 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
     }
 
     function _ccipReceive(Client.Any2EVMMessage memory any2EvmMessage) internal override {
-        // TODO
+        // check that sender is approver CC Receiver
+        require(
+            approvedCrossChainReceivers[any2EvmMessage.sourceChainSelector] == abi.decode(any2EvmMessage.sender, (address)),
+            "CrossChainFacilitator: Sender not approved."
+        );
+
+        // parse the transfer message
+        CrossChainGHOTransfer memory _transfer = decodeCCTransfer(any2EvmMessage.data);
+
+        // if the contract has enough GHO we transfer it out and not mint
+        if (ghoBalance() > _transfer.amount) {
+            GHO_TOKEN.transfer(_transfer.receiver, _transfer.amount);
+        } else {
+            // mint the GHO tokens
+            GHO_TOKEN.mint(address(this), _transfer.amount);
+        }
+
+        // emit event
+        emit MessageReceived(
+            any2EvmMessage.messageId,
+            any2EvmMessage.sourceChainSelector,
+            _transfer.receiver,
+            _transfer.sender,
+            _transfer.amount
+        );
     }
 }
