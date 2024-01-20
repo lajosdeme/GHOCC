@@ -10,17 +10,33 @@ interface ICrossChainFacilitator is IGhoFacilitator {
      * @param oldFee The old fee (in bps)
      * @param newFee The new fee (in bps)
      */
-    event FeeUpdated(uint256 oldFee, uint256 newFee);
+    event MintFeeUpdated(uint256 oldFee, uint256 newFee);
+
+    /**
+     * @dev Emitted when the percentage fee is updated
+     * @param oldFee The old fee (in bps)
+     * @param newFee The new fee (in bps)
+     */
+    event TransferFeeUpdated(uint256 oldFee, uint256 newFee);
 
     event AaveGovernanceUpdated(address oldAaveGovernance, address newAaveGovernance);
+
+    event MessageSent(
+        bytes32 indexed messageId, 
+        uint64 indexed destinationChainSelector,
+        address receiver,
+        uint256 amount,
+        address feeToken,
+        uint256 fees
+    );
 
     // If we have GHO in the contract, we just gonna transfer that to the address, if not we gonna mint
     // Or we can transfer the GHO that's in the contract, and mint the rest of the amount
     function mintGHOForUSDC(uint256 amount, address to) external;
 
-    function redeemUSDCForGHO(uint256 amount, address to) external;
+    function redeemUSDCForGHO(uint64 amount, address to) external;
 
-    function sendGHOCrossChain(uint256 chainId, uint256 amount) external;
+    function sendGHOCrossChain(uint64 chainId, uint256 amount, address to) external returns (bytes32 messageId);
 
     /**
      * @notice Returns the address of the GHO token contract
@@ -39,11 +55,15 @@ interface ICrossChainFacilitator is IGhoFacilitator {
      * @dev The fee is expressed in bps. A value of 100, results in 1.00%
      * @param newFee The new percentage fee (in bps)
      */
-    function updateFee(uint256 newFee) external;
+    function updateMintFee(uint256 newFee) external;
 
     /**
      * @notice Returns the percentage of each mint taken as a fee
      * @return The percentage fee of the minted amount that needs to be repaid, on top of the principal (in bps).
      */
-    function getFee() external view returns (uint256);
+    function getMintFee() external view returns (uint256);
+
+    function updateTransferFee(uint256 newFee) external;
+
+    function getTransferFee() external view returns (uint256);
 }
