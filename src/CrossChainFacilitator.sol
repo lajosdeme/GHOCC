@@ -61,8 +61,10 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
 
     function mintGHOForUSDC(uint256 amount, address to) external {
         // transfer the USDC to this contract
+        
+        uint256 usdcAmount = amount / 10**12; // USDC has 6 decimals, while GHO has 18
         require(
-            USDC_TOKEN.transferFrom(msg.sender, address(this), amount),
+            USDC_TOKEN.transferFrom(msg.sender, address(this), usdcAmount),
             "CrossChainFacilitator: Failed to transfer USDC to facilitator"
         );
 
@@ -90,8 +92,9 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
             "CrossChainFacilitator: Failed to transfer GHO to facilitator"
         );
 
-        // transfer USDC to the
-        require(USDC_TOKEN.transfer(to, amount), "CrossChainFacilitator: Failed to transfer USDC to address");
+        uint256 usdcAmount = amount / 10**12; // USDC has 6 decimals, while GHO has 18
+        // transfer USDC to the address
+        require(USDC_TOKEN.transfer(to, usdcAmount), "CrossChainFacilitator: Failed to transfer USDC to address");
     }
 
     function sendGHOCrossChain(uint64 chainId, uint256 amount, address to)
