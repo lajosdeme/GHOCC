@@ -16,6 +16,8 @@ contract CrossChainReceiver is ICrossChainReceiver, CCIPReceiver, Ownable {
 
     address public sourceChainSender;
 
+    address public lastSender;
+
     mapping(bytes32 => CrossChainGHOTransfer) public processedTransfers;
 
     modifier onlySourceChain(uint64 _chainId) {
@@ -28,12 +30,16 @@ contract CrossChainReceiver is ICrossChainReceiver, CCIPReceiver, Ownable {
         _;
     }
 
+    // Sepolia chain selector: 16015286601757825753
     constructor(uint64 _sourceChainId, address _router, address _sourceChainSender)
         CCIPReceiver(_router)
         Ownable(msg.sender)
     {
         GHO_TOKEN = new GhoToken(address(this));
+        GHO_TOKEN.grantRole(GHO_TOKEN.FACILITATOR_MANAGER_ROLE(), address(this));
+        GHO_TOKEN.grantRole(GHO_TOKEN.BUCKET_MANAGER_ROLE(), address(this));
         GHO_TOKEN.addFacilitator(address(this), "CrossChainFacilitator", 0);
+    
         sourceChainId = _sourceChainId;
         sourceChainSender = _sourceChainSender;
     }
@@ -64,18 +70,28 @@ contract CrossChainReceiver is ICrossChainReceiver, CCIPReceiver, Ownable {
         sourceChainSender = _sender;
     }
 
+    function getRouterFee(uint256 amount, address to) public view returns (uint256) {
+        CrossChainGHOTransfer memory _transfer = CrossChainGHOTransfer(amount, to, msg.sender);
+        Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(sourceChainSender, _transfer, address(0));
+        IRouterClient router = IRouterClient(this.getRouter());
+        uint256 fees = router.getFee(sourceChainId, evm2AnyMessage);
+        return fees;
+    }
+
     function _ccipReceive(Client.Any2EVMMessage memory any2EvmMessage)
         internal
         override
         onlySourceChain(any2EvmMessage.sourceChainSelector)
-        onlyAllowListedSender(abi.decode(any2EvmMessage.sender, (address)))
+        onlyAllowListedSender(bytesToAddress(any2EvmMessage.sender))
     {
+        lastSender = bytesToAddress(any2EvmMessage.sender);
         // decode the bytes message into CrossChainGHOTransfer
         CrossChainGHOTransfer memory _transfer = decodeCCTransfer(any2EvmMessage.data);
 
         // set max bucket cap to amount
         (uint256 currentBucketCapacity, ) = GHO_TOKEN.getFacilitatorBucket(address(this));
         GHO_TOKEN.setFacilitatorBucketCapacity(address(this), uint128(currentBucketCapacity + _transfer.amount));
+
         // mint amount of GHO to the to address
         GHO_TOKEN.mint(_transfer.receiver, _transfer.amount);
 
@@ -87,9 +103,18 @@ contract CrossChainReceiver is ICrossChainReceiver, CCIPReceiver, Ownable {
             _transfer.sender,
             _transfer.amount
         );
-
         // record processed transfer
-        processedTransfers[any2EvmMessage.messageId] = _transfer;
+       processedTransfers[any2EvmMessage.messageId] = _transfer; 
+    }
+
+    function bytesToAddress(bytes memory data) public pure returns (address) {
+        require(data.length >= 20, "Data length must be at least 20 bytes");
+
+        address result;
+        assembly {
+            result := mload(add(data, 20)) // Load the first 20 bytes of data into the result
+        }
+        return result;
     }
 
     function _buildCCIPMessage(address _receiver, CrossChainGHOTransfer memory _transfer, address _feeTokenAddress)
@@ -112,4 +137,6 @@ contract CrossChainReceiver is ICrossChainReceiver, CCIPReceiver, Ownable {
             feeToken: _feeTokenAddress
         });
     }
+
+    receive() external payable {}
 }

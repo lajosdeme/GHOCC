@@ -298,6 +298,63 @@
 			{
 				"inputs": [
 					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "bytesToAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "calcMintFee",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "calcTransferFee",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"components": [
 							{
 								"internalType": "bytes32",
@@ -356,6 +413,19 @@
 			},
 			{
 				"inputs": [],
+				"name": "getAaveGovernance",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "getGhoTreasury",
 				"outputs": [
 					{
@@ -388,6 +458,35 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint64",
+						"name": "chainSelector",
+						"type": "uint64"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "getRouterFee",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -427,9 +526,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint64",
+						"internalType": "uint256",
 						"name": "amount",
-						"type": "uint64"
+						"type": "uint256"
 					},
 					{
 						"internalType": "address",
@@ -488,6 +587,19 @@
 					}
 				],
 				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newAaveGovernance",
+						"type": "address"
+					}
+				],
+				"name": "updateAaveGovernance",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -771,11 +883,11 @@
 			]
 		},
 		"src/CrossChainFacilitator.sol": {
-			"keccak256": "0xd975755841da955eb6bcee8cc118ab1dc788c26f3dd407615f3666eb6ded5785",
+			"keccak256": "0xb23341d36f60473b7e40ffb59cab5de114f595c8834b10acb4e6205aabfcf745",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f7b2fb775ca382e51d0d47cad8b1ac48c8617b3b746f608492c31fd8446d5a84",
-				"dweb:/ipfs/QmRFvz1tvADhRqpaivTGLfnMaLTpAd65CJASPHRPJGAFVN"
+				"bzz-raw://4b079064711daf90b48dcd678feaf12f4795de5544031ba89c5764337b795d6d",
+				"dweb:/ipfs/QmWcYThdY3uCLpfNZJmA5mqbyZZysH6G8SERG42kkMnjZK"
 			]
 		},
 		"src/CrossChainGHOTransfer.sol": {
@@ -811,11 +923,11 @@
 			]
 		},
 		"src/interfaces/ICrossChainFacilitator.sol": {
-			"keccak256": "0x0105f92b0e2abc758dd2be2a2eb18ca1f3f4ea354fd7394ba801ad2fc28dc803",
+			"keccak256": "0xe20432170d0b64cd8196acc8f95607f855fa1bdfec7692050d20fc0b99527d7d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://dd9099db755280c92ec4171c51e0184411b45624ad1b46f41d709d24c9944f51",
-				"dweb:/ipfs/QmWHYZ7bPxtESqrB7ANEWpTMQ3VXa4zLpY9p9EKnAENemJ"
+				"bzz-raw://253c6fe6d5c60d47500a2a2d0b6f0152fe9bec710367e90975b1bde26e5a834a",
+				"dweb:/ipfs/QmRe4byrWdD3St6R6W8XCM6BmSoCCoXgym41ejk6YpxnK4"
 			]
 		}
 	},

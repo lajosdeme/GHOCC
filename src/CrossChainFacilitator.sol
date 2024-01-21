@@ -61,7 +61,6 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
 
     function mintGHOForUSDC(uint256 amount, address to) external {
         // transfer the USDC to this contract
-        
         uint256 usdcAmount = amount / 10**12; // USDC has 6 decimals, while GHO has 18
         require(
             USDC_TOKEN.transferFrom(msg.sender, address(this), usdcAmount),
@@ -69,7 +68,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         );
 
         // The fee due to the treasury
-        uint256 mintFee = _calcMintFee(amount);
+        uint256 mintFee = calcMintFee(amount);
 
         // If the contract has enough GHO we transfer it out and not mint
         if (ghoBalance() >= amount + mintFee) {
@@ -85,7 +84,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         _ghoTreasuryFees += mintFee;
     }
 
-    function redeemUSDCForGHO(uint64 amount, address to) external {
+    function redeemUSDCForGHO(uint256 amount, address to) external {
         // transfer GHO to this contract
         require(
             GHO_TOKEN.transferFrom(msg.sender, address(this), amount),
@@ -103,7 +102,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         returns (bytes32 messageId)
     {
         // calculate the fee to the treasury
-        uint256 transferFee = _calcTransferFee(amount);
+        uint256 transferFee = calcTransferFee(amount);
 
         // transfer amount + fee of GHO to contract
         require(
@@ -111,7 +110,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
             "CrossChainFacilitator: Failed to transfer GHO to facilitator"
         );
 
-        _ghoTreasuryFees != transferFee;
+        _ghoTreasuryFees += transferFee;
 
         // get target chain receiver
         address _receiver = approvedCrossChainReceivers[chainId];
@@ -134,8 +133,18 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         emit MessageSent(messageId, chainId, to, amount, address(0), fees);
     }
 
+    function getRouterFee(uint64 chainSelector, uint256 amount, address to) public view returns (uint256) {
+        address _receiver = approvedCrossChainReceivers[chainSelector];
+        require(_receiver != address(0), "CrossChainFacilitator: Target chain is not supported.");
+        CrossChainGHOTransfer memory _transfer = CrossChainGHOTransfer(amount, to, msg.sender);
+        Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(_receiver, _transfer, address(0));
+        IRouterClient router = IRouterClient(this.getRouter());
+        uint256 fees = router.getFee(chainSelector, evm2AnyMessage);
+        return fees;
+    }
+
     // MINT FEE
-    function _calcMintFee(uint256 amount) internal view returns (uint256) {
+    function calcMintFee(uint256 amount) public view returns (uint256) {
         return amount.percentMul(_mintFee);
     }
 
@@ -155,7 +164,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
     }
 
     // TRANSFER FEE
-    function _calcTransferFee(uint256 amount) internal view returns (uint256) {
+    function calcTransferFee(uint256 amount) public view returns (uint256) {
         return amount.percentMul(_transferFee);
     }
 
@@ -190,6 +199,14 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
         address oldGhoTreasury = _ghoTreasury;
         _ghoTreasury = newGhoTreasury;
         emit GhoTreasuryUpdated(oldGhoTreasury, newGhoTreasury);
+    }
+
+    function updateAaveGovernance(address newAaveGovernance) external onlyAaveGovernance {
+        _updateAaveGovernance(newAaveGovernance);
+    }
+
+    function getAaveGovernance()external view returns (address) {
+        return _aaveGovernance;
     }
 
     function _updateAaveGovernance(address newAaveGovernance) internal {
@@ -238,7 +255,7 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
     function _ccipReceive(Client.Any2EVMMessage memory any2EvmMessage) internal override {
         // check that sender is approver CC Receiver
         require(
-            approvedCrossChainReceivers[any2EvmMessage.sourceChainSelector] == abi.decode(any2EvmMessage.sender, (address)),
+            approvedCrossChainReceivers[any2EvmMessage.sourceChainSelector] == bytesToAddress(any2EvmMessage.sender),
             "CrossChainFacilitator: Sender not approved."
         );
 
@@ -261,5 +278,15 @@ contract CrossChainFacilitator is CCIPReceiver, ICrossChainFacilitator {
             _transfer.sender,
             _transfer.amount
         );
+    }
+
+    function bytesToAddress(bytes memory data) public pure returns (address) {
+        require(data.length >= 20, "Data length must be at least 20 bytes");
+
+        address result;
+        assembly {
+            result := mload(add(data, 20)) // Load the first 20 bytes of data into the result
+        }
+        return result;
     }
 }
