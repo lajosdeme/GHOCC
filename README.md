@@ -16,4 +16,7 @@ Sepolia demo USDC: 0xd702baC2f43eB7B9aAD73b965210b241d873154C
 Sepolia demo GHO: 0x57F324D62E8fCfCD64c3dc254a04f7a84363F9ef    
 Sepolia Facilitator: 0x6eF0D6F8714C570eBc575B39137662bfD8a913CA    
 Mumbai Receiver: 0x16ffa647315b5c83234c1e3ff0814cf9ea3a7ef9    
-Mumbai demo GHO: 0xa08690e2d701306A230C3A87551F5542d6c0B988    
+Mumbai demo GHO: 0xa08690e2d701306A230C3A87551F5542d6c0B988      
+
+The code for the UI is available here:    
+https://github.com/lajosdeme/ghocc-ui    
