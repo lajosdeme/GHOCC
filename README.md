@@ -11,6 +11,10 @@ The following capabilities are available in the GHOCC smart contracts:
 
 A fee is charged for swapping USDC for GHO, and for sending GHO cross-chain. The fees are distributable only to the Aave Treasury.    
 
+Since only pre-deployed token pools are available at the moment for CCIP on testnets, GHOCC uses a simple message send, with the details of the transfer. It verifies that it came from the approved Facilitator on Sepolia, and if it did, it mints wrapped GHO on Polygon Mumbai.    
+
+It is only deployed between Sepolia and Polygon Mumbai for the demo, but if there is demand it could be deployed to any other chain.    
+
 Addresses:    
 Sepolia demo USDC: 0xd702baC2f43eB7B9aAD73b965210b241d873154C    
 Sepolia demo GHO: 0x57F324D62E8fCfCD64c3dc254a04f7a84363F9ef    
